@@ -59,5 +59,18 @@ public class Main {
         // Print graph to verify
         System.out.println("\nGraph constructed successfully!");
         System.out.println(graph);
+
+        // Generate and print the study plan
+        List<List<String>> studyPlan = graph.generateStudyPlan(concurrent);
+
+        System.out.println("\n=== Optimal Study Plan ===");
+        int period = 1;
+        for (List<String> periodCourses : studyPlan) {
+            System.out.println("Study Period " + period + ": " + periodCourses);
+            period++;
+        }
+        System.out.println("\nTotal study periods: " + (period - 1));
     }
+
+
 }

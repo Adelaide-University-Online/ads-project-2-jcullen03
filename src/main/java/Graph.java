@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
+import java.util.ArrayDeque;
+import java.util.Collections;
 
 /**
  * Represents the degree course structure as a directed unweighted graph
@@ -51,7 +53,7 @@ public class Graph {
      * Adds a directed edge from a prerequisite course to the given course.
      *
      * @param courseCode the course that has the prerequisite
-     * @param prereq the prerequisite course code
+     * @param prereq     the prerequisite course code
      */
     public void addPrerequisite(String courseCode, String prereq) {
         // Ensure both courses exist in the graph
@@ -74,5 +76,75 @@ public class Graph {
             sb.append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
         }
         return sb.toString();
+    }
+
+    /**
+     * Calculates the in-degree of each course (number of prerequisites).
+     *
+     * @return a map of course code to its in-degree count
+     */
+    public Map<String, Integer> calculateInDegrees() {
+        Map<String, Integer> inDegrees = new HashMap<>();
+
+        // In-degree = number of prerequisites (size of each course's own list)
+        for (Map.Entry<String, List<String>> entry : adjacencyList.entrySet()) {
+            inDegrees.put(entry.getKey(), entry.getValue().size());
+        }
+
+        return inDegrees;
+    }
+
+    /**
+     * Generates an optimal study plan using topological sort.
+     * Groups courses into study periods based on the concurrent course limit.
+     *
+     * @param concurrent the maximum number of courses per study period
+     * @return a list of study periods, each containing a list of course codes
+     */
+    public List<List<String>> generateStudyPlan(int concurrent) {
+        Map<String, Integer> inDegrees = calculateInDegrees();
+        List<List<String>> studyPlan = new ArrayList<>();
+        List<String> available = new ArrayList<>();
+
+        // Find all courses with no prerequisites
+        for (String course : adjacencyList.keySet()) {
+            if (inDegrees.get(course) == 0) {
+                available.add(course);
+            }
+        }
+        Collections.sort(available);
+
+        while (!available.isEmpty()) {
+            // Take up to concurrent courses this period
+            List<String> taking = new ArrayList<>(
+                    available.subList(0, Math.min(concurrent, available.size()))
+            );
+            List<String> remaining = new ArrayList<>(
+                    available.subList(Math.min(concurrent, available.size()), available.size())
+            );
+
+            // Find newly unlocked courses after completing this period
+            List<String> newlyUnlocked = new ArrayList<>();
+            for (String course : taking) {
+                for (Map.Entry<String, List<String>> entry : adjacencyList.entrySet()) {
+                    if (entry.getValue().contains(course)) {
+                        String dependent = entry.getKey();
+                        inDegrees.put(dependent, inDegrees.get(dependent) - 1);
+                        if (inDegrees.get(dependent) == 0) {
+                            newlyUnlocked.add(dependent);
+                        }
+                    }
+                }
+            }
+
+            studyPlan.add(taking);
+
+            // Next period: remaining deferred + newly unlocked
+            Collections.sort(newlyUnlocked);
+            available = new ArrayList<>(remaining);
+            available.addAll(newlyUnlocked);
+        }
+
+        return studyPlan;
     }
 }
