@@ -57,6 +57,13 @@ public class Main {
                 }
             }
 
+            // Validate concurrent courses input
+            while (concurrent <= 0) {
+                System.out.println("Number of concurrent courses must be greater than 0. Please try again.");
+                System.out.print("Enter the number of concurrent courses: ");
+                concurrent = scanner.nextInt();
+            }
+
         } catch (IOException e) {
             System.out.println("Error reading file: " + e.getMessage());
         }

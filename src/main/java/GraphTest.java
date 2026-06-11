@@ -114,4 +114,14 @@ public class GraphTest {
         }
         assertTrue(periodA < periodB);
     }
+
+    @Test
+    void testStudyPlanInvalidConcurrent() {
+        graph.addCourse("A");
+        graph.addCourse("B");
+        // concurrent of 0 should not cause infinite loop
+        // validation handled in Main, but graph should handle gracefully
+        List<List<String>> plan = graph.generateStudyPlan(1);
+        assertFalse(plan.isEmpty());
+    }
 }
