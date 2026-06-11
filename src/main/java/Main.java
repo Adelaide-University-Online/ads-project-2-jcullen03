@@ -65,7 +65,7 @@ public class Main {
             }
 
         } catch (IOException e) {
-            System.out.println("Error reading file: " + e.getMessage());
+            System.out.println("Error: Could not find or read file '" + filename + "'. Please check the filename and try again.");
         }
 
         System.out.println("Graph constructed successfully!");
