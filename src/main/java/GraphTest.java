@@ -124,4 +124,78 @@ public class GraphTest {
         List<List<String>> plan = graph.generateStudyPlan(1);
         assertFalse(plan.isEmpty());
     }
+
+    @Test
+    void testEmptyGraph() {
+        // Empty graph should produce empty study plan
+        List<List<String>> plan = graph.generateStudyPlan(3);
+        assertTrue(plan.isEmpty());
+    }
+
+    @Test
+    void testSingleCourse() {
+        // Single course with no prerequisites — one period with one course
+        graph.addCourse("COMP1043");
+        List<List<String>> plan = graph.generateStudyPlan(3);
+        assertEquals(1, plan.size());
+        assertEquals(1, plan.get(0).size());
+        assertTrue(plan.get(0).contains("COMP1043"));
+    }
+
+    @Test
+    void testLargeConcurrentLimit() {
+        // Concurrent limit larger than number of courses — all in one period
+        graph.addCourse("A");
+        graph.addCourse("B");
+        graph.addCourse("C");
+        List<List<String>> plan = graph.generateStudyPlan(100);
+        assertEquals(1, plan.size());
+        assertEquals(3, plan.get(0).size());
+    }
+
+    @Test
+    void testAllCoursesScheduled() {
+        // Every course must appear exactly once in the study plan
+        graph.addPrerequisite("B", "A");
+        graph.addPrerequisite("C", "B");
+        graph.addCourse("D");
+        List<List<String>> plan = graph.generateStudyPlan(2);
+        int total = 0;
+        for (List<String> period : plan) {
+            total += period.size();
+        }
+        assertEquals(4, total);
+    }
+
+    @Test
+    void testGraphEquality() {
+        Graph graph2 = new Graph();
+        graph.addCourse("COMP1043");
+        graph2.addCourse("COMP1043");
+        assertEquals(graph, graph2);
+    }
+
+    @Test
+    void testGraphInequalityDifferentCourses() {
+        Graph graph2 = new Graph();
+        graph.addCourse("COMP1043");
+        graph2.addCourse("INFT1024");
+        assertNotEquals(graph, graph2);
+    }
+
+    @Test
+    void testMultiplePrerequisiteChain() {
+        // C requires both A and B — C cannot appear until period after both A and B
+        graph.addPrerequisite("C", "A");
+        graph.addPrerequisite("C", "B");
+        List<List<String>> plan = graph.generateStudyPlan(3);
+        int periodA = -1, periodB = -1, periodC = -1;
+        for (int i = 0; i < plan.size(); i++) {
+            if (plan.get(i).contains("A")) periodA = i;
+            if (plan.get(i).contains("B")) periodB = i;
+            if (plan.get(i).contains("C")) periodC = i;
+        }
+        assertTrue(periodA < periodC);
+        assertTrue(periodB < periodC);
+    }
 }
