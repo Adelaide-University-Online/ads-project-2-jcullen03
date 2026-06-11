@@ -1,10 +1,3 @@
-import java.util.Scanner;
-import java.util.ArrayList;
-import java.util.List;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-
 /**
  * File: Main.java
  * Description: Entry point for the OptiTime tool. Reads a degree structure
@@ -16,8 +9,23 @@ import java.io.IOException;
  * This is my own work as defined by
  * the University's Academic Integrity Policy.
  **/
+
+import java.util.Scanner;
+import java.util.List;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+
 public class Main {
 
+    /**
+     * Entry point for the OptiTime tool.
+     * Reads a degree structure from a text file, constructs the graph,
+     * and outputs an optimal study plan.
+     *
+     * @param args command line arguments (not used)
+     */
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
 
@@ -35,11 +43,8 @@ public class Main {
             // Line 1: extract all course codes and add to graph
             String firstLine = reader.readLine();
             String[] courseCodes = firstLine.split(", ");
-            List<Course> courses = new ArrayList<>();
             for (String code : courseCodes) {
-                String trimmed = code.trim();
-                courses.add(new Course(trimmed));
-                graph.addCourse(trimmed);
+                graph.addCourse(code.trim());
             }
 
             // Remaining lines: extract prerequisites and add edges
@@ -56,9 +61,7 @@ public class Main {
             System.out.println("Error reading file: " + e.getMessage());
         }
 
-        // Print graph to verify
-        System.out.println("\nGraph constructed successfully!");
-        System.out.println(graph);
+        System.out.println("Graph constructed successfully!");
 
         // Generate and print the study plan
         List<List<String>> studyPlan = graph.generateStudyPlan(concurrent);
@@ -71,6 +74,6 @@ public class Main {
         }
         System.out.println("\nTotal study periods: " + (period - 1));
     }
-
-
 }
+
+

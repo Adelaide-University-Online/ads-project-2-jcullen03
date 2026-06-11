@@ -9,6 +9,10 @@
  * the University's Academic Integrity Policy.
  **/
 
+/**
+ * Represents a single course in the degree program.
+ * Each course is identified by a unique course code.
+ */
 public class Course {
 
     private String courseCode;

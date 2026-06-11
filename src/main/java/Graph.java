@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.ArrayList;
-import java.util.ArrayDeque;
 import java.util.Collections;
 
 /**
@@ -76,6 +75,30 @@ public class Graph {
             sb.append(entry.getKey()).append(" -> ").append(entry.getValue()).append("\n");
         }
         return sb.toString();
+    }
+
+    /**
+     * Checks if two graphs are equal based on their adjacency lists.
+     *
+     * @param obj the object to compare with
+     * @return true if the adjacency lists match, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Graph other = (Graph) obj;
+        return adjacencyList.equals(other.adjacencyList);
+    }
+
+    /**
+     * Returns a hash code for this graph based on its adjacency list.
+     *
+     * @return the hash code
+     */
+    @Override
+    public int hashCode() {
+        return adjacencyList.hashCode();
     }
 
     /**
