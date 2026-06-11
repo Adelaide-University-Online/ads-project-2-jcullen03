@@ -16,7 +16,9 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 
-
+/**
+ * Main class for the OptiTime degree planning tool.
+ */
 public class Main {
 
     /**
@@ -34,6 +36,13 @@ public class Main {
 
         System.out.print("Enter the number of concurrent courses: ");
         int concurrent = scanner.nextInt();
+
+        // Validate concurrent courses input
+        while (concurrent <= 0) {
+            System.out.println("Number of concurrent courses must be greater than 0. Please try again.");
+            System.out.print("Enter the number of concurrent courses: ");
+            concurrent = scanner.nextInt();
+        }
 
         // Create the graph
         Graph graph = new Graph();
@@ -57,12 +66,6 @@ public class Main {
                 }
             }
 
-            // Validate concurrent courses input
-            while (concurrent <= 0) {
-                System.out.println("Number of concurrent courses must be greater than 0. Please try again.");
-                System.out.print("Enter the number of concurrent courses: ");
-                concurrent = scanner.nextInt();
-            }
 
         } catch (IOException e) {
             System.out.println("Error: Could not find or read file '" + filename + "'. Please check the filename and try again.");
